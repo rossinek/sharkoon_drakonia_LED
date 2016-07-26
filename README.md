@@ -1,5 +1,5 @@
 # Sharkoon mouse LED controller
-LED driver for mouses by Sharkoon and Tracer. Tested on Sharkoon Drakonia / Tracer Recon.
+LED driver for mouses by Sharkoon and Tracer. Tested on Ubuntu 16.04 with Sharkoon Drakonia / Tracer Recon mouse.
 
 compilation: `gcc sharkoonLED.c -o sharkoonLED -lusb-1.0`
 
@@ -17,5 +17,5 @@ dependencies: `libusb-1.0`
 			2 - middle
 			3 - fast
 		color:
-			0 - choose color in program (default)
+			0 - choose color in program with arrows (default)
 			1-24 - color index
