@@ -17,5 +17,5 @@ dependencies: `libusb-1.0`
 			2 - middle
 			3 - fast
 		color:
-			0 - choose color in program (default)
+			0 - choose color in program with arrows (default)
 			1-24 - color index
