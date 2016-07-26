@@ -62,7 +62,7 @@ unsigned char data_intensity[][8] = {
 
 struct libusb_device_handle* init_device();
 void close_device();
-int choose_color(struct libusb_device_handle *handle, int intensity, int pulsation);
+int select_color(struct libusb_device_handle *handle, int intensity, int pulsation);
 int change_color(struct libusb_device_handle *handle, int color, int intensity, int pulsation);
 
 int is_number(unsigned char *str);
@@ -81,7 +81,7 @@ void usage() {
     printf("\t\t2 - middle\n");
     printf("\t\t3 - fast\n");
     printf("\tcolor:\n");
-    printf("\t\t0 - choose color in program (default)\n");
+    printf("\t\t0 - select color in program (default)\n");
     printf("\t\t1-24 - color index\n");
 }
 
@@ -113,7 +113,7 @@ int main(int argc, char **argv) {
 
     color = color-1;
     if(color < 0) {
-        if(intensity) color = choose_color(usb_handle, intensity, pulsation);
+        if(intensity) color = select_color(usb_handle, intensity, pulsation);
         else color = 0;
     }
 
@@ -124,7 +124,7 @@ int main(int argc, char **argv) {
     return 0;
 }
 
-int choose_color(struct libusb_device_handle *handle, int intensity, int pulsation) {
+int select_color(struct libusb_device_handle *handle, int intensity, int pulsation) {
     printf("Select color by pressing left/right arrow. ");
     printf("Press enter to confirm.\n");
     
@@ -153,6 +153,7 @@ int choose_color(struct libusb_device_handle *handle, int intensity, int pulsati
         }
     }
 
+    printf("You have selected color with index %d.\n", color+1);
     return color;
 }
 
