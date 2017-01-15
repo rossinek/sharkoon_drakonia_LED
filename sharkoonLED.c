@@ -159,7 +159,7 @@ int main(int argc, char **argv) {
     } if(argc>3) {
         if(is_number(argv[3])) color = atoi(argv[3]);
         else color = -1;
-    } if(argc>4 || color<0 || color>23 || intensity<0 || intensity>3 || pulsation<0 || pulsation>3) {
+    } if(argc>4 || color<0 || color>24 || intensity<0 || intensity>3 || pulsation<0 || pulsation>3) {
         usage();
         return 0;
     }
@@ -188,7 +188,7 @@ int select_color(struct libusb_device_handle *handle, int intensity, int pulsati
     printf("Select color by pressing left/right arrow. ");
     printf("Press enter to confirm.\n");
     
-    int color = 1;
+    int color = 0;
     change_color(handle, color, intensity?intensity:1, pulsation);
 
     char c;
