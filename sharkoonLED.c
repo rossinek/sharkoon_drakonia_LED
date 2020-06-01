@@ -3,7 +3,7 @@
 //
 // author:  Artur Rosa
 // version: 0.0.1
-// 
+//
 // dependencies: libusb-1.0
 // gcc sharkoonLED.c -o sharkoonLED -lusb-1.0
 
@@ -55,7 +55,7 @@ unsigned char data_colors[][8] = {
     { 0x07, 0x3A, 0x30, 0xB0, 0x17, 0x33, 0xA7, 0xB2 },
     { 0x07, 0x3A, 0x31, 0xB0, 0x17, 0x33, 0xA7, 0xB2 },
     { 0x07, 0x3A, 0x32, 0xB0, 0x17, 0x33, 0xA7, 0xB2 },
-    
+
     { 0x07, 0x3A, 0x33, 0xB0, 0x17, 0x33, 0xA7, 0xB2 }, // low
     { 0x07, 0x3A, 0x34, 0xB0, 0x17, 0x33, 0xA7, 0xB2 },
     { 0x07, 0x3A, 0x35, 0xB0, 0x17, 0x33, 0xA7, 0xB2 },
@@ -73,7 +73,7 @@ unsigned char data_colors[][8] = {
     { 0x07, 0x3A, 0x40, 0xB0, 0x17, 0x33, 0xA7, 0xB2 },
     { 0x07, 0x3A, 0x41, 0xB0, 0x17, 0x33, 0xA7, 0xB2 },
     { 0x07, 0x3A, 0x42, 0xB0, 0x17, 0x33, 0xA7, 0xB2 },
-    
+
     { 0x07, 0x3A, 0x43, 0xB0, 0x17, 0x33, 0xA7, 0xB2 }, // high
 
     { 0x07, 0x3A, 0x43, 0xB0, 0x17, 0x33, 0xA7, 0xB2 },
@@ -102,7 +102,7 @@ unsigned char data_colors[][8] = {
     { 0x07, 0x3A, 0xEE, 0xB0, 0x17, 0x33, 0xA7, 0xB2 },
     { 0x07, 0x3A, 0xFF, 0xB0, 0x17, 0x33, 0xA7, 0xB2 },
 
-};*/    
+};*/
 
 #define COLORS_NUM  sizeof(data_colors)/sizeof(8*sizeof(unsigned char))
 
@@ -163,7 +163,7 @@ int main(int argc, char **argv) {
         usage();
         return 0;
     }
-    
+
     struct libusb_device_handle *usb_handle;
     usb_handle = init_device();
     if(usb_handle == NULL) {
@@ -187,7 +187,7 @@ int main(int argc, char **argv) {
 int select_color(struct libusb_device_handle *handle, int intensity, int pulsation) {
     printf("Select color by pressing left/right arrow. ");
     printf("Press enter to confirm.\n");
-    
+
     int color = 0;
     change_color(handle, color, intensity?intensity:1, pulsation);
 
@@ -202,7 +202,7 @@ int select_color(struct libusb_device_handle *handle, int intensity, int pulsati
                     color = (color-1 < 0) ? COLORS_NUM-1 : color-1;
                     break;
                 case 'C': // code for right arrow
-                    color = (color+1 >= COLORS_NUM) ? 0 : color+1;                    
+                    color = (color+1 >= COLORS_NUM) ? 0 : color+1;
                     break;
                 default:
                     continue;
@@ -245,7 +245,7 @@ int change_color(struct libusb_device_handle *handle, int color, int intensity, 
 struct libusb_device_handle* init_device() {
     int res = 0;
     struct libusb_device_handle *usb_handle;
-    
+
     libusb_init(NULL);
     usb_handle = libusb_open_device_with_vid_pid(NULL, VENDOR_ID, PRODUCT_ID);
 
@@ -253,16 +253,18 @@ struct libusb_device_handle* init_device() {
         fprintf(stderr, "Unable to open USB device (probably you need sudo)!\n");
         return NULL;
     }
-    if(res=libusb_detach_kernel_driver(usb_handle, 1)){
-        fprintf(stderr, "usb_detach_kernel_driver_np Error.(%s)\n", libusb_strerror(res));
-        close_device(usb_handle);
-        return NULL;
-    }
-    if((res=libusb_claim_interface(usb_handle, 1)) < 0) {
-        fprintf(stderr, "libusb_claim_interface Error.(%s)\n", libusb_strerror(res));
-        close_device(usb_handle);
-        return NULL;
-    }
+    #ifndef __APPLE__
+        if(res=libusb_detach_kernel_driver(usb_handle, 1)){
+            fprintf(stderr, "usb_detach_kernel_driver_np Error. (%s)\n", libusb_strerror(res));
+            close_device(usb_handle);
+            return NULL;
+        }
+        if((res=libusb_claim_interface(usb_handle, 1)) < 0) {
+            fprintf(stderr, "libusb_claim_interface Error. (%s)\n", libusb_strerror(res));
+            close_device(usb_handle);
+            return NULL;
+        }
+    #endif
 
     return usb_handle;
 }
@@ -270,12 +272,14 @@ struct libusb_device_handle* init_device() {
 void close_device(struct libusb_device_handle* usb_handle) {
     int res;
     if(usb_handle) {
-        if(res=libusb_release_interface(usb_handle, 1)) {
-            fprintf(stderr, "usb_release_interface() failed. (%s)\n", libusb_strerror(res));
-        }
-        if(res=libusb_attach_kernel_driver(usb_handle, 1)) {
-            fprintf(stderr, "usb_attach_kernel_driver_np Error.(%s)\n", libusb_strerror(res));
-        }
+        #ifndef __APPLE__
+            if(res=libusb_release_interface(usb_handle, 1)) {
+                fprintf(stderr, "usb_release_interface() failed. (%s)\n", libusb_strerror(res));
+            }
+            if(res=libusb_attach_kernel_driver(usb_handle, 1)) {
+                fprintf(stderr, "usb_attach_kernel_driver_np Error. (%s)\n", libusb_strerror(res));
+            }
+        #endif
         if(res=libusb_reset_device(usb_handle)) {
             fprintf(stderr, "usb_reset Error.(%s)\n", libusb_strerror(res));
         }
@@ -284,7 +288,7 @@ void close_device(struct libusb_device_handle* usb_handle) {
 }
 
 int is_number(unsigned char *str) {
-    char buf[7] = {0};  
+    char buf[7] = {0};
     return (strtok(strncpy(buf, str, sizeof(buf)), "0123456789") == NULL);
 }
 
