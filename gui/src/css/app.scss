@@ -1,0 +1,28 @@
+// app global css in SCSS form
+
+body {
+  --sh-base: #{$dark};
+  --sh-inverted: #fff;
+  background: #fff;
+}
+
+body.body--dark {
+  --sh-base: #fff;
+  --sh-inverted: #{$dark};
+  background: #000;
+}
+
+
+.text-sh-base {
+  color: var(--sh-base);
+}
+.bg-sh-base {
+  background: var(--sh-base);
+}
+
+.text-sh-inverted {
+  color: var(--sh-inverted);
+}
+.bg-sh-inverted {
+  background: var(--sh-inverted);
+}
